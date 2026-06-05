@@ -13,10 +13,14 @@ import { GiftBox } from './components/GiftBox';
 import { StorybookLetters } from './components/StorybookLetters';
 import { BirthdayCake } from './components/BirthdayCake';
 import { GrandCelebration } from './components/GrandCelebration';
+import { BirthdayCountdown } from './components/BirthdayCountdown';
 import { Volume2, VolumeX, Sparkles, Heart } from 'lucide-react';
+
+const TARGET_DATE = new Date('2026-06-06T00:00:00');
 
 export default function App() {
   const [screen, setScreen] = useState<AppScreen>(AppScreen.OPENING);
+  const [isCountdownLocked, setIsCountdownLocked] = useState(() => new Date().getTime() < TARGET_DATE.getTime());
   const [isMuted, setIsMuted] = useState(true); // Default muted to comply with browser autoplay blocks
   const [confettiTrigger, setConfettiTrigger] = useState(0);
   const [fireworkTrigger, setFireworkTrigger] = useState(0);
@@ -138,103 +142,121 @@ export default function App() {
       {/* --- MAIN PAGE LAYOUT SECTION WITH ANIMATIONS --- */}
       <main className="flex-grow flex items-center justify-center w-full z-10 px-4 mt-6">
         <AnimatePresence mode="wait">
-          {screen === AppScreen.OPENING && (
+          {isCountdownLocked ? (
             <motion.div
-              key="opening"
-              initial={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.4, ease: "easeInOut" }}
-              className="w-full flex flex-col items-center justify-center text-center max-w-2xl"
-            >
-              <div className="space-y-4 px-4 py-8">
-                {/* Visual Title */}
-                <motion.h1
-                  initial={{ y: -30, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ type: "spring", stiffness: 100, damping: 15 }}
-                  className="text-3xl sm:text-4xl md:text-5xl font-serif font-black text-pink-600 leading-tight tracking-tight drop-shadow-[0_2px_10px_rgba(244,63,94,0.1)] uppercase"
-                >
-                  Yayyy!! It's your birthday today, Sonaaaaa Di!
-                </motion.h1>
-
-                {/* Subheading text */}
-                <motion.p
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.3, duration: 0.8 }}
-                  className="text-base sm:text-lg md:text-xl font-sans font-medium text-stone-700 leading-relaxed max-w-lg mx-auto bg-white/50 backdrop-blur-xs py-2 px-4 rounded-xl"
-                >
-                  A huge, enormous, wonderful, spectacular, fantastic, incredible, magnificent, extraordinary, and heartfelt Happy 17th Birthday!
-                </motion.p>
-
-                {/* Additional Text */}
-                <motion.p
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.6, duration: 0.8 }}
-                  className="font-cursive text-2xl sm:text-3xl font-semibold text-rose-500/90 tracking-wide mt-2 animate-bounce"
-                >
-                  Someone has prepared a special surprise just for you...
-                </motion.p>
-              </div>
-
-              {/* Gift Box Component */}
-              <motion.div
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ type: 'spring', stiffness: 90, damping: 15, delay: 1.2 }}
-              >
-                <GiftBox 
-                  onOpen={handleGiftBoxOpen} 
-                  triggerSparkle={() => setBurstTrigger((prev) => prev + 1)} 
-                />
-              </motion.div>
-            </motion.div>
-          )}
-
-          {screen === AppScreen.LETTER && (
-            <motion.div
-              key="letters"
+              key="countdown-lock"
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.92 }}
-              transition={{ duration: 0.5 }}
-              className="w-full"
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.4 }}
+              className="w-full flex items-center justify-center"
             >
-              <StorybookLetters 
-                onLettersComplete={handleLettersComplete} 
-                triggerBurst={() => setBurstTrigger((prev) => prev + 1)} 
+              <BirthdayCountdown 
+                targetDate={TARGET_DATE} 
+                onBypass={() => setIsCountdownLocked(false)} 
               />
             </motion.div>
-          )}
+          ) : (
+            <>
+              {screen === AppScreen.OPENING && (
+                <motion.div
+                  key="opening"
+                  initial={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.4, ease: "easeInOut" }}
+                  className="w-full flex flex-col items-center justify-center text-center max-w-2xl"
+                >
+                  <div className="space-y-4 px-4 py-8">
+                    {/* Visual Title */}
+                    <motion.h1
+                      initial={{ y: -30, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      transition={{ type: "spring", stiffness: 100, damping: 15 }}
+                      className="text-3xl sm:text-4xl md:text-5xl font-serif font-black text-pink-600 leading-tight tracking-tight drop-shadow-[0_2px_10px_rgba(244,63,94,0.1)] uppercase"
+                    >
+                      Yayyy!! It's your birthday today, Sonaaaaa Di!
+                    </motion.h1>
 
-          {screen === AppScreen.CAKE && (
-            <motion.div
-              key="cake"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.6 }}
-              className="w-full"
-            >
-              <BirthdayCake 
-                onWishUnlocked={handleWishUnlocked} 
-                triggerConfetti={() => setConfettiTrigger((prev) => prev + 1)} 
-                triggerFirework={() => setFireworkTrigger((prev) => prev + 1)} 
-                triggerBurst={traverseToFinale}
-              />
-            </motion.div>
-          )}
+                    {/* Subheading text */}
+                    <motion.p
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.3, duration: 0.8 }}
+                      className="text-base sm:text-lg md:text-xl font-sans font-medium text-stone-700 leading-relaxed max-w-lg mx-auto bg-white/50 backdrop-blur-xs py-2 px-4 rounded-xl"
+                    >
+                      A huge, enormous, wonderful, spectacular, fantastic, incredible, magnificent, extraordinary, and heartfelt Happy 17th Birthday!
+                    </motion.p>
 
-          {screen === AppScreen.FINALE && (
-            <motion.div
-              key="finale"
-              initial={{ opacity: 0, scale: 0.92, rotate: 1 }}
-              animate={{ opacity: 1, scale: 1, rotate: 0 }}
-              className="w-full"
-            >
-              <GrandCelebration />
-            </motion.div>
+                    {/* Additional Text */}
+                    <motion.p
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.6, duration: 0.8 }}
+                      className="font-cursive text-2xl sm:text-3xl font-semibold text-rose-500/90 tracking-wide mt-2 animate-bounce"
+                    >
+                      Someone has prepared a special surprise just for you...
+                    </motion.p>
+                  </div>
+
+                  {/* Gift Box Component */}
+                  <motion.div
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ type: 'spring', stiffness: 90, damping: 15, delay: 1.2 }}
+                  >
+                    <GiftBox 
+                      onOpen={handleGiftBoxOpen} 
+                      triggerSparkle={() => setBurstTrigger((prev) => prev + 1)} 
+                    />
+                  </motion.div>
+                </motion.div>
+              )}
+
+              {screen === AppScreen.LETTER && (
+                <motion.div
+                  key="letters"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.92 }}
+                  transition={{ duration: 0.5 }}
+                  className="w-full"
+                >
+                  <StorybookLetters 
+                    onLettersComplete={handleLettersComplete} 
+                    triggerBurst={() => setBurstTrigger((prev) => prev + 1)} 
+                  />
+                </motion.div>
+              )}
+
+              {screen === AppScreen.CAKE && (
+                <motion.div
+                  key="cake"
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ duration: 0.6 }}
+                  className="w-full"
+                >
+                  <BirthdayCake 
+                    onWishUnlocked={handleWishUnlocked} 
+                    triggerConfetti={() => setConfettiTrigger((prev) => prev + 1)} 
+                    triggerFirework={() => setFireworkTrigger((prev) => prev + 1)} 
+                    triggerBurst={traverseToFinale}
+                  />
+                </motion.div>
+              )}
+
+              {screen === AppScreen.FINALE && (
+                <motion.div
+                  key="finale"
+                  initial={{ opacity: 0, scale: 0.92, rotate: 1 }}
+                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                  className="w-full"
+                >
+                  <GrandCelebration />
+                </motion.div>
+              )}
+            </>
           )}
         </AnimatePresence>
       </main>

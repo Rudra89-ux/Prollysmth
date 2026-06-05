@@ -1,0 +1,6 @@
+{
+  "name": "Sonaaaaa Di Birthday Surprise",
+  "description": "A beautiful, interactive, premium 17th birthday surprise website for Sonaaaaa Di.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

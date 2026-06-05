@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { Sparkles, Heart, Clock, Lock, ArrowRight } from 'lucide-react';
-import { audioSynth } from '../utils/audio';
+import { Lock } from 'lucide-react';
 
 interface CountdownProps {
   onBypass: () => void;
@@ -127,25 +126,6 @@ export const BirthdayCountdown: React.FC<CountdownProps> = ({ onBypass, targetDa
           </motion.div>
         ))}
       </div>
-
-      {/* Subtle Testing / Preview Bypass for standard editor verification */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.8 }}
-        transition={{ delay: 1.2 }}
-        className="mt-4"
-      >
-        <button
-          onClick={() => {
-            audioSynth.playPageClick();
-            onBypass();
-          }}
-          className="inline-flex items-center gap-1.5 px-4 py-2 border border-dashed border-pink-300 text-pink-600 hover:text-pink-700 bg-white/40 hover:bg-white/80 duration-350 transition-colors text-2xs font-semibold rounded-full shadow-sm tracking-wider uppercase cursor-pointer"
-        >
-          <span>Bypass Countdown (Testing only)</span>
-          <ArrowRight className="w-3 h-3" />
-        </button>
-      </motion.div>
     </div>
   );
 };
